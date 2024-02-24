@@ -19,9 +19,7 @@ class Recipe:
     
     def getTime(self):
         return self.time
-    
-
-class Lot:
+class Lot: ### Init every lot with a recipe and then can change with every steps completed 
     def __str__(self):
         return f"Lot{self.id}"
     
@@ -106,11 +104,10 @@ class Equipment:
 
 def simulation(startingEquipmentList):
     profit = 0
-    sampleStatusList = []
+    sampleStatusList = [startingEquipmentList]
     currentStatusList = startingEquipmentList
     
-    
-    ### Start simulation
+    ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
         for equipment in currentStatusList:
             recipeList = equipmentData[equipment.getId()]
@@ -120,7 +117,9 @@ def simulation(startingEquipmentList):
             
             else: ## is switching
                 
+            
                 
+        sampleStatusList.append(currentStatusList)
             
         
     return (profit, sampleStatusList)
