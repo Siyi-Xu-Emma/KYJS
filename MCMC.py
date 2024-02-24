@@ -75,6 +75,8 @@ class Processing(State):
 class Switching(State):
     def __init__(self, startLot, endLot):
         super().__init__(2) 
+        self.startLot = startLot
+        self.endLot = endLot
         startRecipe = startRecipe.getRecipe().getId()
         endRecipe = endRecipe.getRecipe().getId()
         self.remainingTime = SWITCH_TIME.iloc[startRecipe, endRecipe]
@@ -84,6 +86,10 @@ class Switching(State):
     
     def cutRemainingTime(self):
         self.remainingTime -= 1
+        
+    def getEndLot(self):
+        return self.endLot   
+    
 class Equipment:
     def __str__(self):
         return f"Equipment{self.id}"
@@ -102,7 +108,7 @@ class Equipment:
         return self.state.getId()
     
     def getState(self):
-        return self.state
+        return self.state 
     
 
 
@@ -129,6 +135,7 @@ def simulation(startingEquipmentList):
     sampleStatusList = [startingEquipmentList]
     currentStatusList = startingEquipmentList
     lotsAvailable = []
+    MLotId = 0
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
@@ -139,9 +146,9 @@ def simulation(startingEquipmentList):
                 #### Need not change state
                 if equipment.getStateId() == 1: # is Processing
                     pass
-                    
                 else: ## is switching
                     pass
+                
             else: ### Need to change state
                 if equipment.getStateId() == 0: ## is Idle
                     # from available lots choose the one with less steps left to do newstep
@@ -149,11 +156,16 @@ def simulation(startingEquipmentList):
                     
                     # if no available then create a new lot 
                     if not lotsAvailable:
+                        MLotId += 1
+                        
                         
                 elif equipment.getStateId() == 1: # is Processing
                     # choice: 
                     
                 else: ## is switching
+                    # has to change state
+                    newState = Processing(equipment.getState().getEndLot()) 
+                    equipment.changeState(newState)
                     
                 
             
