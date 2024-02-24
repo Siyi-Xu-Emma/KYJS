@@ -8,7 +8,11 @@ chemicalLife = 500
 # Parameter predefined
 reclaimEfficiency = 0.09
 batchLife = [7, 8]
-
+class Production() {
+    
+}
    
-def forecast(batchLife, ):
+def forecast(batchLife,  ):
     return 
+
+print()
