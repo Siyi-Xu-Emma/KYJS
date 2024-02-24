@@ -4,8 +4,9 @@ import random
 SIMULATION_RANGE = 168
 TOTAL_STEPS_PER_LOT = 5
 SWITCH_TIME = pd.read_csv("switchTime.csv")
+RECIPE_COST = pd.read_csv("recipeCost.csv")
 equipmentData = ([0, 1, 3, 4],[1, 2, 4],[0, 2, 3])
-
+MINIMUM_POSSIBILITY = 0.01
 class Recipe:
     def __str__(self):
         return f"Recipe{self.id}"
@@ -103,37 +104,64 @@ class Equipment:
     def getState(self):
         return self.state
     
+
+
+x +=
+y +=
+z += iloc[2,recipe.getId()]
         
 
- 
-
+def choose_with_probability(choices, probabilities): ### Choose one of the choices according to their probabilities.
+    if len(choices) != len(probabilities):
+        raise ValueError("Length of choices and probabilities should be the same.")
+    # Normalize probabilities to sum up to 1
+    total_probability = sum(probabilities)
+    normalized_probabilities = [p / total_probability for p in probabilities]
+    # Choose one item based on probabilities
+    choice = random.choices(choices, weights=normalized_probabilities, k=1)[0]
+    return choice 
 
 def simulation(startingEquipmentList):
     profit = 0
+    x = 0
+    y = 0
+    z = 0
     sampleStatusList = [startingEquipmentList]
     currentStatusList = startingEquipmentList
+    lotsAvailable = []
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
         for equipment in currentStatusList:
             equipment.getState().cutRemainingTime()
             recipeList = equipmentData[equipment.getId()]
-            if equipment.getState().getRemainingTime() == 0:
-                #### Need to change state
-                if equipment.getStateId() == 0: # is idle
-                    
-                
-                elif equipment.getStateId() == 1: # is Processing
-                    
+            if equipment.getState().getRemainingTime() > 0:
+                #### Need not change state
+                if equipment.getStateId() == 1: # is Processing
+                    pass
                     
                 else: ## is switching
+                    pass
+            else: ### Need to change state
+                if equipment.getStateId() == 0: ## is Idle
+                    # from available lots choose the one with less steps left to do newstep
+                        # equally choose recipe
+                    
+                    # if no available then create a new lot 
+                    if not lotsAvailable:
+                        
+                elif equipment.getStateId() == 1: # is Processing
+                    # choice: 
+                    
+                else: ## is switching
+                    
                 
             
                 
         sampleStatusList.append(currentStatusList)
             
         
-    return (profit, sampleStatusList)
+    return (profit, x, y, z, sampleStatusList)
     
     
     
@@ -143,7 +171,7 @@ def simulation(startingEquipmentList):
 ### Initialization
 startingEquipmentList = [Equipment(0), Equipment(1), Equipment(2)]
 
-for simulationTime in range(10086):
+for simulationTime in range(1008600):
     maxProfit = 0
     resultPair = simulation(startingEquipmentList)
     statusList = []
