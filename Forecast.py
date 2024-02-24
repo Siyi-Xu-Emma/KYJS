@@ -12,7 +12,7 @@ chemicalLife = 500
 
 # Read Data
 demand = pd.read_csv("Datasets/Weekly_Projections.csv")
-print(demand)
+# print(demand)
 
 
 class Tank: 
@@ -132,7 +132,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             
         if currentProduct:    
             weekDemand[currentProduct.getId()] -= processSpeed
-            print(weekDemand)
+            # print(weekDemand)
             if weekDemand[currentProduct.getId()] <= 0:
                 weekDemand.pop(currentProduct.getId())   
                    
@@ -148,7 +148,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
         
         if not (time + 1) % WEEKMINS and weekIndex < weeks - 1: ## initiate new week after one week
             weekIndex += 1
-            print(weekIndex)
+            # print(weekIndex)
             weekDemand = []
             for i in range(productNum):
                 weekDemand.append(demand.iloc[i, weekIndex])
@@ -170,4 +170,4 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 batchLifes = [6, 7.5]
 loadSizes = [37, 50]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
