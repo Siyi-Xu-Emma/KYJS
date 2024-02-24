@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Constants
-WEEKHRS = 10080
+WEEKMINS = 7 * 24 * 60 * 60
 chemicalLife = 500
 
 # Parameter predefined
@@ -43,23 +43,37 @@ class Product:
         
         
 tank = Tank(80)
-products = [Product(0), Product(1)]
-print(tank, products[0], products[1])
 
-def forecast(tankSize, productNum, batchLifes, loadSizes, demand, predictionRange):
+#### no replenishment at the end of the week
+
+def forecast(tankSize, productNum, batchLifes, loadSizes, demand, weeks):
+    tank = Tank(80)
     products = []
+    predictionRange = WEEKMINS * weeks
+    usageResult = []
+    
     for i in range(productNum):
+        new = Product(i, batchLifes[i], loadSizes[i])
+        products.append(new)
+        print(new)
         
-    productNum = len(products)
     for time in range(0, predictionRange): ## predictionRange in min
         weekIndex = 0
-        if not time % WEEKHRS:
-            weekIndex = time // WEEKHRS
-        weekDemand = []
-        for i in range(productNum):
-            weekDemand.append(demand.iloc[i, weekIndex])
+        weekUsage = 0
         
-    return weekDemand
+        if not time % WEEKMINS: ## initiate new week
+            weekIndex = time // WEEKMINS
+            print(weekIndex)
+            weekDemand = []
+            for i in range(productNum):
+                weekDemand.append(demand.iloc[i, weekIndex])
+            processSpeed = sum(weekDemand)/WEEKMINS
+        
+        if not time % chemicalLife:
+            tank.replenish()
+        
+        
+    
 
 # Print Results
-print(80, batchLifes,loadSizes, demand, 10)
+print(forecast(80, 2, batchLifes,loadSizes, demand, 10))
