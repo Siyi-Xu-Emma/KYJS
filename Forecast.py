@@ -65,14 +65,15 @@ class Product:
 ###reclaimEfficiency changes with time
 def getReclaimEfficiency(time):
     #return random.randint(4,9)/10
-    return 0.7
+    return 0.5
 
 def chooseProduct(tank, product, weekProducts):
     if weekProducts:
         #print(weekProducts[0])
+        #return random.choice(weekProducts)
         return weekProducts[0]
     else:
-        print("demand met alr")
+        #print("demand met alr")
         return []
     
     
@@ -104,7 +105,6 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             weekUsage += tank.replenish(getReclaimEfficiency(time))
                  
         ### Start processing
-        
         if not tank.isProcessing():
             ## put in new batch and start processing
             currentProduct = chooseProduct(tank, currentProduct, weekProducts)
@@ -115,7 +115,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
                 tank.cutBatchLife(currentProduct)
                 # print(tank.getRemainBatchLife())
                 if tank.getRemainBatchLife() <= 0:
-                    print("replenish")
+                    ##print("replenish")
                     ## replenish
                     weekUsage += tank.replenish(getReclaimEfficiency(time))
                 tank.shiftProcessing()
@@ -125,21 +125,16 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             tank.shiftProcessing()
             
         if currentProduct:    
+            ## print(weekDemand, weekProducts, currentProduct)
             weekDemand[currentProduct.getId()] -= processSpeed
             # print(weekDemand)
             if weekDemand[currentProduct.getId()] <= 0:
+                if tank.isProcessing():
+                    tank.shiftProcessing()
                 weekDemand.pop(currentProduct.getId())   
-                   
-
-            
+                weekProducts.pop(currentProduct.getId())
                 
-        
-        
-            
-        
         ### check remainbatchLife
-        
-        
         if not (time + 1) % WEEKMINS and weekIndex < weeks - 1: ## initiate new week after one week
             weekIndex += 1
             print(weekIndex)
@@ -152,17 +147,13 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             weekProducts = products
             
     usageResult.append(weekUsage)
-
-            
-        
     return usageResult
 
 
 
 #Test
-
 # Parameter predefined
 batchLifes = [6, 7.5]
 loadSizes = [37, 50]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
