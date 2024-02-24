@@ -72,8 +72,10 @@ class Processing(State):
         self.remainingTime -= 1
  
 class Switching(State):
-    def __init__(self, startRecipe, endRecipe):
+    def __init__(self, startLot, endLot):
         super().__init__(2) 
+        startRecipe = startRecipe.getRecipe().getId()
+        endRecipe = endRecipe.getRecipe().getId()
         self.remainingTime = SWITCH_TIME.iloc[startRecipe, endRecipe]
     
     def getRemainingTime(self):
@@ -117,14 +119,14 @@ def simulation(startingEquipmentList):
             equipment.getState().cutRemainingTime()
             recipeList = equipmentData[equipment.getId()]
             if equipment.getState().getRemainingTime() == 0:
+                #### Need to change state
+                if equipment.getStateId() == 0: # is idle
+                    
                 
-            if equipment.getStateId() == 0: # is idle
-                
-            
-            elif equipment.getStateId() == 1: # is Processing
-                
-                
-            else: ## is switching
+                elif equipment.getStateId() == 1: # is Processing
+                    
+                    
+                else: ## is switching
                 
             
                 
