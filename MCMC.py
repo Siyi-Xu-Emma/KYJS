@@ -7,6 +7,8 @@ SWITCH_TIME = pd.read_csv("switchTime.csv")
 RECIPE_COST = pd.read_csv("recipeCost.csv")
 equipmentData = ([0, 1, 3, 4],[1, 2, 4],[0, 2, 3])
 MINIMUM_POSSIBILITY = 0.01
+NORMAL_POSSIBILITY = 0.5
+MAXIMUM_POSSIBILITY = 0.9
 class Recipe:
     def __str__(self):
         return f"Recipe{self.id}"
@@ -135,7 +137,7 @@ def simulation(startingEquipmentList):
     sampleStatusList = [startingEquipmentList]
     currentStatusList = startingEquipmentList
     lotsAvailable = []
-    MLotId = 0
+    MLotId = -1
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
@@ -154,9 +156,13 @@ def simulation(startingEquipmentList):
                     # from available lots choose the one with less steps left to do newstep
                         # equally choose recipe
                     
+                    
                     # if no available then create a new lot 
                     if not lotsAvailable:
                         MLotId += 1
+                        chosenRecipe = choose_with_probability(recipeList, len(recipeList) * [NORMAL_POSSIBILITY])
+                        lotsAvailable.append(Lot(MLotId, chosenRecipe))
+                    
                         
                         
                 elif equipment.getStateId() == 1: # is Processing
