@@ -15,28 +15,40 @@ class Recipe:
     
     def getTime(self):
         return self.time
- 
- 
- 
 class Lot:
     def __str__(self):
         return f"Lot{self.id}"
     
-    def __init__(self, id):  
+    def __init__(self, id, recipe):  
         self.id = id
+        self.step = 1
+        self.recipe = recipe
+    def newStep(self):
+        self.step += 1
+        
+    def getId(self):
+        return self.id
     
-         
+    def getStep(self):
+        return self.step
+           
 class Equipment:
     def __str__(self):
         return f"Equipment{self.id}"
     
     def __init__(self, id):
+        self.id = id
         self.recipe = None
+    
+    def getId(self):
+        return self.id
+    
         
 
  
 ### Initialization
 currentState = [Equipment(0), Equipment(1), Equipment(2)]
+
 def simulation(currentState):
     pass
     
