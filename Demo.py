@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 
 # Constants
 WEEKMINS = 7 * 24 * 60 * 60
@@ -26,8 +27,9 @@ class Tank:
     def __str__(self):
         return f"tank sized {self.size}L"
     
-    def replenish(self):
+    def replenish(self, reclaimEfficiency):
         self.batchLife = 1
+        return self.size * (1- reclaimEfficiency)
 
 class Product:
     def __init__(self, id, batchLife, loadSize):
@@ -44,23 +46,31 @@ class Product:
         
 tank = Tank(80)
 
+###reclaimEfficiency changes with time
+def reclaimEfficiency(time):
+    return random.randint(4,9)/10
+
 #### no replenishment at the end of the week
 
-def forecast(tankSize, productNum, batchLifes, loadSizes, demand, weeks):
+def forecast(tankSize, productNum, batchLifes, loadSizes, reclaimEfficiency, demand, weeks):
     tank = Tank(80)
     products = []
     predictionRange = WEEKMINS * weeks
     usageResult = []
     
-    for i in range(productNum):
+    for i in range(productNum):  ##initialization
         new = Product(i, batchLifes[i], loadSizes[i])
         products.append(new)
-        print(new)
+    
+    
         
+    weekUsage = 0
     for time in range(0, predictionRange): ## predictionRange in min
         weekIndex = 0
-        weekUsage = 0
         
+        if not time % chemicalLife: ## replenish when chemical life reached
+            weekUsage += tank.replenish(reclaimEfficiency(time))
+            
         if not time % WEEKMINS: ## initiate new week
             weekIndex = time // WEEKMINS
             print(weekIndex)
@@ -68,12 +78,14 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, demand, weeks):
             for i in range(productNum):
                 weekDemand.append(demand.iloc[i, weekIndex])
             processSpeed = sum(weekDemand)/WEEKMINS
+            usageResult.append(weekUsage)
+            weekUsage = 0
         
-        if not time % chemicalLife:
-            tank.replenish()
+
+            
         
-        
+    return usageResult
     
 
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, demand, 10))
+print(forecast(80, 2, batchLifes,loadSizes, reclaimEfficiency, demand, 10))
