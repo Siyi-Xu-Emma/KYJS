@@ -3,23 +3,23 @@ import numpy as np
 import random
 SIMULATION_RANGE = 168
 TOTAL_STEPS_PER_LOT = 5
+SWITCH_TIME = pd.read_csv("switchTime.csv")
+equipmentData = ([0, 1, 3, 4],[1, 2, 4],[0, 2, 3])
 
 class Recipe:
     def __str__(self):
         return f"Recipe{self.id}"
     
     def __init__(self, id, time):
-        self.remainTime = time
+        self.time = time
         self.id = id
     
     def getId(self):
         return self.id
     
-    def getRemainTime(self):
-        return self.remainTime
+    def getTime(self):
+        return self.time
     
-    def cutRemainTime(self):
-        self.remainTime -= 1
 
 class Lot:
     def __str__(self):
@@ -37,8 +37,11 @@ class Lot:
     def getId(self):
         return self.id
     
-    def getStep(self):
+    def getRemainingStep(self):
         return self.step
+    
+    def getRecipe(self):
+        return self.recipe
 
 class State:
     def __init__(self, id):
@@ -52,15 +55,30 @@ class Idle(State):
         super().__init__(0)
 
 class Processing(State):
-    def __init__(self, lot, recipe):
+    def __init__(self, lot):
         super().__init__(1) 
         self.lot = lot
-        self.recipe = recipe 
+        self.remainingTime = self.lot.getRecipe().getTime()
+        
+    def getProcessedLot(self):
+        return self.lot
+    
+    def getRemainingTime(self):
+        return self.remainingTime
+    
+    def cutRemainingTime(self):
+        self.remainingTime -= 1
  
 class Switching(State):
     def __init__(self, startRecipe, endRecipe):
         super().__init__(2) 
-         
+        self.remainingTime = SWITCH_TIME.iloc[startRecipe, endRecipe]
+    
+    def getRemainingTime(self):
+        return self.remainingTime
+    
+    def cutRemainingTime(self):
+        self.remainingTime -= 1
 class Equipment:
     def __str__(self):
         return f"Equipment{self.id}"
@@ -77,7 +95,9 @@ class Equipment:
     
     def getStateId(self):
         return self.state.getId()
-        
+    
+    def getState(self):
+        return self.state
     
         
 
@@ -93,7 +113,13 @@ def simulation(startingEquipmentList):
     ### Start simulation
     for i in range(SIMULATION_RANGE):
         for equipment in currentStatusList:
+            recipeList = equipmentData[equipment.getId()]
             if equipment.getStateId() == 0: # is idle
+            
+            elif equipment.getStateId() == 1: # is Processing
+            
+            else: ## is switching
+                
                 
             
         
