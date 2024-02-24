@@ -23,8 +23,10 @@ class Lot:
         self.id = id
         self.step = 1
         self.recipe = recipe
-    def newStep(self):
+        
+    def newStep(self, newRecipe):
         self.step += 1
+        self.recipe = newRecipe
         
     def getId(self):
         return self.id
@@ -39,6 +41,7 @@ class Equipment:
     def __init__(self, id):
         self.id = id
         self.recipe = None
+        self.state = 0 ##Idle: 0 processing: 1, switching: 2
     
     def getId(self):
         return self.id
