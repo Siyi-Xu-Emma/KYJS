@@ -26,6 +26,7 @@ class Tank:
     
     def replenish(self, reclaimEfficiency):
         self.remainBatchLife = 1
+        
         return self.size * (1- reclaimEfficiency)
     
     def processOneBatch(self, product):
@@ -69,12 +70,15 @@ tank = Tank(80)
 
 ###reclaimEfficiency changes with time
 def getReclaimEfficiency(time):
-    return random.randint(4,9)/10
+    #return random.randint(4,9)/10
+    return 0.7
 
 def chooseProduct(tank, product, weekProducts):
     if weekProducts:
+        #print(weekProducts[0])
         return weekProducts[0]
     else:
+        print("demand met alr")
         return []
     
     
@@ -100,7 +104,8 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
         weekDemand.append(demand.iloc[i, weekIndex])   
     processSpeed = sum(weekDemand)/WEEKMINS
     
-    for time in range(0, predictionRange): ## predictionRange in min
+    ## simulation in min
+    for time in range(0, predictionRange): 
         if not time % chemicalLife: ## replenish when chemical life reached replenish at start
             weekUsage += tank.replenish(getReclaimEfficiency(time))
                  
@@ -114,7 +119,9 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
                 
                 ### cut remainbatchlife
                 tank.cutBatchLife(currentProduct)
+                # print(tank.getRemainBatchLife())
                 if tank.getRemainBatchLife() <= 0:
+                    print("replenish")
                     ## replenish
                     weekUsage += tank.replenish(getReclaimEfficiency(time))
                 tank.shiftProcessing()
@@ -125,6 +132,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             
         if currentProduct:    
             weekDemand[currentProduct.getId()] -= processSpeed
+            print(weekDemand)
             if weekDemand[currentProduct.getId()] <= 0:
                 weekDemand.pop(currentProduct.getId())   
                    
@@ -159,7 +167,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 #Test
 
 # Parameter predefined
-batchLifes = [7, 8]
-loadSizes = [38, 50]
+batchLifes = [6, 7.5]
+loadSizes = [37, 50]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
