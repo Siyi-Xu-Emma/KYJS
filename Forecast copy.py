@@ -78,8 +78,8 @@ def getReclaimEfficiency(time):
 def chooseProduct(tank, product, weekProducts):
     if weekProducts:
         #print(weekProducts[0])
-        # return weekProducts[0]
-        return random.choice(weekProducts)
+        return weekProducts[0]
+        # return random.choice(weekProducts)
     else:
         print("demand met alr")
         return None
@@ -108,12 +108,11 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
     
     ## simulation in min
     for time in range(0, predictionRange): 
-        if not time % CHEMICAL_LIFE: ## replenish when chemical life reached replenish at start
-            tank.cutChemicalLife()
-            if tank.getChemicalLife() <= 0:
-                amount = tank.replenish(getReclaimEfficiency(time))
-                weekUsage += amount
-                print("replenish chemicalLife", amount)
+        tank.cutChemicalLife()
+        if tank.getChemicalLife() <= 0:
+            amount = tank.replenish(getReclaimEfficiency(time))
+            weekUsage += amount
+            print("replenish chemicalLife", amount)
             
         ### Start processing
         if not tank.isProcessing():
@@ -193,4 +192,4 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 batchLifes = [6, 7.5]
 loadSizes = [36, 50]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
