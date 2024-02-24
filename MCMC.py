@@ -51,6 +51,10 @@ class State:
 class Idle(State):
     def __init__(self):
         super().__init__(0)
+        self.remainingTime = 1
+    
+    def cutRemainingTime(self):
+        self.remainingTime -1
 
 class Processing(State):
     def __init__(self, lot):
@@ -110,11 +114,16 @@ def simulation(startingEquipmentList):
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
         for equipment in currentStatusList:
+            equipment.getState().cutRemainingTime()
             recipeList = equipmentData[equipment.getId()]
+            if equipment.getState().getRemainingTime() == 0:
+                
             if equipment.getStateId() == 0: # is idle
+                
             
             elif equipment.getStateId() == 1: # is Processing
-            
+                
+                
             else: ## is switching
                 
             
