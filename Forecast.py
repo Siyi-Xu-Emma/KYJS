@@ -148,7 +148,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
         
         if not (time + 1) % WEEKMINS and weekIndex < weeks - 1: ## initiate new week after one week
             weekIndex += 1
-            # print(weekIndex)
+            print(weekIndex)
             weekDemand = []
             for i in range(productNum):
                 weekDemand.append(demand.iloc[i, weekIndex])
@@ -156,7 +156,8 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             usageResult.append(weekUsage)
             weekUsage = 0
             weekProducts = products
-        
+            
+    usageResult.append(weekUsage)
 
             
         
