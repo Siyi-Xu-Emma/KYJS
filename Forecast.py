@@ -5,11 +5,6 @@ import random
 # Constants
 WEEKMINS = 7 * 24 * 60 
 chemicalLife = 500
-
-
-
-
-
 # Read Data
 demand = pd.read_csv("Datasets/Weekly_Projections.csv")
 # print(demand)
@@ -66,7 +61,6 @@ class Product:
     
         
         
-tank = Tank(80)
 
 ###reclaimEfficiency changes with time
 def getReclaimEfficiency(time):
