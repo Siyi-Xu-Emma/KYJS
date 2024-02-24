@@ -42,8 +42,8 @@ class Tank:
 class Product:
     def __init__(self, id, batchLife, loadSize):
         self.id = id
-        self.remain = 0
         self.costPerBatch = 1 / batchLife
+        # print(self.costPerBatch)
         self.loadSize = loadSize
         
     def getId(self):
@@ -65,16 +65,16 @@ class Product:
 ###reclaimEfficiency changes with time
 def getReclaimEfficiency(time):
     #return random.randint(4,9)/10
-    return 0.5
+    return 0.09
 
 def chooseProduct(tank, product, weekProducts):
     if weekProducts:
         #print(weekProducts[0])
-        #return random.choice(weekProducts)
         return weekProducts[0]
+        # return random.choice(weekProducts)
     else:
-        #print("demand met alr")
-        return []
+        print("demand met alr")
+        return None
     
     
 
@@ -87,27 +87,29 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
     for i in range(productNum):  ##initialization products
         new = Product(i, batchLifes[i], loadSizes[i])
         products.append(new)
-    
+    weekProducts = products
     
         
     weekUsage = 0 ##initialize week info
     weekIndex = 0
-    weekDemand = []
-    weekProducts = products
+    weekDemand = {}
     currentProduct = weekProducts[0]
     for i in range(productNum):
-        weekDemand.append(demand.iloc[i, weekIndex])   
-    processSpeed = sum(weekDemand)/WEEKMINS
+        weekDemand[i] = demand.iloc[i, weekIndex] 
+    processSpeed = sum(weekDemand.values())/WEEKMINS
     
     ## simulation in min
     for time in range(0, predictionRange): 
         if not time % chemicalLife: ## replenish when chemical life reached replenish at start
-            weekUsage += tank.replenish(getReclaimEfficiency(time))
-                 
+            amount = tank.replenish(getReclaimEfficiency(time))
+            weekUsage += amount
+            #print("replenish chemicalLife", amount)
+            
         ### Start processing
         if not tank.isProcessing():
             ## put in new batch and start processing
             currentProduct = chooseProduct(tank, currentProduct, weekProducts)
+            
             if currentProduct:
                 remainWafers = currentProduct.getLoadSize()
                 
@@ -115,36 +117,60 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
                 tank.cutBatchLife(currentProduct)
                 # print(tank.getRemainBatchLife())
                 if tank.getRemainBatchLife() <= 0:
-                    ##print("replenish")
+                    
                     ## replenish
-                    weekUsage += tank.replenish(getReclaimEfficiency(time))
+                    amount = tank.replenish(getReclaimEfficiency(time))
+                    weekUsage += amount
+                    # print("replenish batchLife", amount)
                 tank.shiftProcessing()
-        
-        remainWafers -= processSpeed
-        if remainWafers < 0:  ### end one batch
-            tank.shiftProcessing()
-            
+ 
         if currentProduct:    
-            ## print(weekDemand, weekProducts, currentProduct)
+            #print(weekDemand, weekProducts, currentProduct)
             weekDemand[currentProduct.getId()] -= processSpeed
             # print(weekDemand)
             if weekDemand[currentProduct.getId()] <= 0:
+                # print(weekDemand[currentProduct.getId()] )
                 if tank.isProcessing():
                     tank.shiftProcessing()
-                weekDemand.pop(currentProduct.getId())   
-                weekProducts.pop(currentProduct.getId())
+                weekDemand.pop(currentProduct.getId())  
+                # print(weekProducts, currentProduct)
+                
+                for h in range(len(weekProducts)):
+                    if weekProducts[h].getId() == currentProduct.getId():
+                        # print("finish one",h,len(weekProducts))
+                        weekProducts.pop(h)
+                        break
+
+            # print(remainWafers)              
+            remainWafers -= processSpeed
+            if remainWafers < 0:  ### end one batch
+                if tank.isProcessing():
+                    tank.shiftProcessing()
+            
+
                 
         ### check remainbatchLife
         if not (time + 1) % WEEKMINS and weekIndex < weeks - 1: ## initiate new week after one week
+            # print("\n", weekDemand)
             weekIndex += 1
-            print(weekIndex)
-            weekDemand = []
+            weekDemand = {}
             for i in range(productNum):
-                weekDemand.append(demand.iloc[i, weekIndex])
-            processSpeed = sum(weekDemand)/WEEKMINS
+                weekDemand[i] = demand.iloc[i, weekIndex]
+            processSpeed = sum(weekDemand.values())/WEEKMINS
+            
+            
             usageResult.append(weekUsage)
             weekUsage = 0
-            weekProducts = products
+            
+            weekProducts = []
+            for i in range(productNum):  ##initialization products
+                new = Product(i, batchLifes[i], loadSizes[i])
+                weekProducts.append(new)
+                
+            # print(weekIndex, weekDemand, processSpeed, weekProducts)
+            if tank.isProcessing():
+                tank.shiftProcessing()
+            
             
     usageResult.append(weekUsage)
     return usageResult
@@ -153,7 +179,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 
 #Test
 # Parameter predefined
-batchLifes = [6, 7.5]
-loadSizes = [37, 50]
+batchLifes = [7, 8]
+loadSizes = [38, 52]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
