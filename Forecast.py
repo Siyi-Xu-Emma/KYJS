@@ -190,7 +190,8 @@ numOfProducts = 2
 batchLifes = [5, 7]
 loadSizes = [35, 48]
 numOfTanks = 1
+weeks = 5
 # Print Results
-print(forecast(tankSize, numOfProducts, numOfTanks, batchLifes,loadSizes, getReclaimEfficiency, demand, 5))
+#print(forecast(tankSize, numOfProducts, numOfTanks, batchLifes,loadSizes, getReclaimEfficiency, demand, weeks))
 
 
