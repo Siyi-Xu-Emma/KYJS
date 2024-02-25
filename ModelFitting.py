@@ -18,7 +18,13 @@ best_mae = float('inf')
 best_params = {}
 
 for batch_life_A in batch_life_range_A:
+<<<<<<< Updated upstream
     for load_size_A in load_size_range_A:
+=======
+    print("current batch_life_A", batch_life_A)
+    for load_size_A in load_size_range_A:
+        print("load_size_range_A", load_size_range_A)
+>>>>>>> Stashed changes
         for batch_life_B in batch_life_range_B:
             for load_size_B in load_size_range_B:
                 # Run the forecast with the current set of parameters
