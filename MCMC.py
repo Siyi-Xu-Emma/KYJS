@@ -9,6 +9,7 @@ equipmentData = ([0, 1, 3, 4],[1, 2, 4],[0, 2, 3])
 MINIMUM_POSSIBILITY = 0.01
 NORMAL_POSSIBILITY = 0.5
 MAXIMUM_POSSIBILITY = 0.9
+
 class Recipe:
     def __str__(self):
         return f"Recipe{self.id}"
