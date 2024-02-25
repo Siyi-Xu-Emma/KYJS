@@ -88,7 +88,4 @@ for n_step in n_steps_list:
 plt.show()
 
 
-
-def longTermForecast():
-    pass
     
