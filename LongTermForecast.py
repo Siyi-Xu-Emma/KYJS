@@ -6,4 +6,5 @@ from Forecast import *
 
 
 def longTermForecast():
-    pass
+    
+    
