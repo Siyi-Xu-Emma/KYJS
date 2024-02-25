@@ -164,7 +164,6 @@ def simulation(startingEquipmentList):
                         lotsAvailable.append(Lot(MLotId, chosenRecipe))
                     
                         
-                        
                 elif equipment.getStateId() == 1: # is Processing
                     # choice: 
                     pass
