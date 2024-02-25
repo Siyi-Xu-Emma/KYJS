@@ -114,9 +114,6 @@ class Equipment:
     
 
 
-x +=
-y +=
-z += iloc[2,recipe.getId()]
         
 
 def choose_with_probability(choices, probabilities): ### Choose one of the choices according to their probabilities.
@@ -134,10 +131,12 @@ def simulation(startingEquipmentList):
     x = 0
     y = 0
     z = 0
-    sampleStatusList = [startingEquipmentList]
+
+    sample = []
     currentStatusList = startingEquipmentList
     lotsAvailable = []
-    MLotId = -1
+    lotsUncompleted = []
+    MlotId = -1
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
@@ -167,6 +166,7 @@ def simulation(startingEquipmentList):
                         
                 elif equipment.getStateId() == 1: # is Processing
                     # choice: 
+                    pass
                     
                 else: ## is switching
                     # has to change state
@@ -174,12 +174,8 @@ def simulation(startingEquipmentList):
                     equipment.changeState(newState)
                     
                 
-            
-                
-        sampleStatusList.append(currentStatusList)
-            
-        
-    return (profit, x, y, z, sampleStatusList)
+        sample.append()
+    return (profit, x, y, z, sample)
     
     
     
