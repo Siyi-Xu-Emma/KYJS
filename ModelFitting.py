@@ -9,10 +9,10 @@ actual_usage = actualUsage.values.flatten()
 
 
 # Define the ranges for batch life and load size for both products
-batch_life_range_A = np.arange(5, 8, 1)  # Product A: 5 to 7
-load_size_range_A = np.arange(35, 39, 1)  # Product A: 35 to 38
-batch_life_range_B = np.arange(7, 9, 1)  # Product B: 7 to 8
-load_size_range_B = np.arange(45, 53, 1)  # Product B: 45 to 52
+batch_life_range_A = np.arange(5, 8, 0.1)  # Product A: 5 to 7
+load_size_range_A = np.arange(35, 39, 0.1)  # Product A: 35 to 38
+batch_life_range_B = np.arange(7, 9, 0.1)  # Product B: 7 to 8
+load_size_range_B = np.arange(45, 53, 0.1)  # Product B: 45 to 52
 # Placeholder for the best MAE and corresponding parameters
 best_mae = float('inf')
 best_params = {}
