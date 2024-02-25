@@ -120,44 +120,42 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
         if not tank.isProcessing():
             tank.shiftProcessing()
             ## put in new batch and start processing
-            #print(currentProduct)
-            if currentProduct:
-                remainWafers = currentProduct.getLoadSize()
-                currentProduct = chooseProduct(tank, currentProduct, weekProducts)
-                
-                ### cut remainbatchlife
-                tank.cutBatchLife(currentProduct)
-                print(tank.getRemainBatchLife())
-                if tank.getRemainBatchLife() <= 0:
-                    # print(tank.getRemainBatchLife())
-                    ## replenish
-                    print("replenish", currentProduct)
-                    weekUsage += tank.replenish(getReclaimEfficiency(time))
-                
+            # print(currentProduct)
+            currentProduct = chooseProduct(tank, currentProduct, weekProducts)
+            remainWafers = currentProduct.getLoadSize()
+            ### cut remainbatchlife
+            tank.cutBatchLife(currentProduct)
+            print(tank.getRemainBatchLife())
+            if tank.getRemainBatchLife() <= 0:
+                # print(tank.getRemainBatchLife())
+                ## replenish
+                print("replenish", currentProduct)
+                weekUsage += tank.replenish(getReclaimEfficiency(time))
+            
                 
  
-        if currentProduct:    
-            #print(weekDemand, weekProducts, currentProduct)
-            weekDemand[currentProduct.getId()] -= processSpeed
-            #print(weekDemand)
-            if weekDemand[currentProduct.getId()] <= 0:
-                # print(weekDemand[currentProduct.getId()] )
-                if tank.isProcessing():
-                    tank.shiftProcessing()
-                weekDemand.pop(currentProduct.getId())  
-                # print(weekProducts, currentProduct)
-                
-                for h in range(len(weekProducts)):
-                    if weekProducts[h].getId() == currentProduct.getId():
-                        # print("finish one",h,len(weekProducts))
-                        weekProducts.pop(h)
-                        break
+            
+        #print(weekDemand, weekProducts, currentProduct)
+        weekDemand[currentProduct.getId()] -= processSpeed
+        #print(weekDemand)
+        if weekDemand[currentProduct.getId()] <= 0:
+            # print(weekDemand[currentProduct.getId()] )
+            if tank.isProcessing():
+                tank.shiftProcessing()
+            weekDemand.pop(currentProduct.getId())  
+            # print(weekProducts, currentProduct)
+            
+            for h in range(len(weekProducts)):
+                if weekProducts[h].getId() == currentProduct.getId():
+                    # print("finish one",h,len(weekProducts))
+                    weekProducts.pop(h)
+                    break
 
-            # print(remainWafers)              
-            remainWafers -= processSpeed
-            if remainWafers <= 0:  ### end one batch
-                if tank.isProcessing():
-                    tank.shiftProcessing()
+        print(remainWafers)              
+        remainWafers -= processSpeed
+        if remainWafers <= 0:  ### end one batch
+            if tank.isProcessing():
+                tank.shiftProcessing()
             
 
 
@@ -196,4 +194,4 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 batchLifes = [7, 8]
 loadSizes = [37, 51]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 5))
