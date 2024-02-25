@@ -26,9 +26,6 @@ class Tank:
         
         return self.size * (1- reclaimEfficiency)
     
-    def processOneBatch(self, product):
-        return 0
-    
     def getRemainBatchLife(self):
         return self.remainBatchLife
     
