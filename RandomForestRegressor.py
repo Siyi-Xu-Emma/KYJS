@@ -7,6 +7,7 @@ demand = pd.read_csv("Datasets/Weekly_Projections.csv")
 # Example data
 data = np.array(demand.iloc[0,:])
 name = "Product 1 Demand Prediction weekly"
+future_steps = 10
 #data = data1 = np.array(demand.iloc[1,:])
 
 # Function to prepare data for Random Forest Regressor
@@ -30,14 +31,14 @@ def train_random_forest_model(data, n_steps, future_steps):
     X, y = prepare_data(data, n_steps)
     
     # Define the Random Forest Regressor model
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model = RandomForestRegressor(n_estimators= future_steps, random_state=42)
     
     # Fit the model
     model.fit(X, y)
     
     # Make future predictions
     x_input = data[-n_steps:].reshape(1, -1)
-    predictions = []
+    predictions = data
     for _ in range(future_steps):
         y_pred = model.predict(x_input)
         predictions.append(y_pred[0])
@@ -46,7 +47,7 @@ def train_random_forest_model(data, n_steps, future_steps):
     return predictions
 
 # Define values of n_steps to test
-n_steps_list = [5, 6, 7]
+n_steps_list = [2, 3, 4, 5, 6, 7]
 
 # Plot original data
 plt.figure(figsize=(10, 6))
@@ -55,7 +56,7 @@ plt.scatter(range(len(data)), data, label='Original Data')
 # Loop over different values of n_steps
 for n_steps in n_steps_list:
     # Train Random Forest model and make predictions
-    predictions = train_random_forest_model(data, n_steps, future_steps=100)
+    predictions = train_random_forest_model(data, n_steps, future_steps)
     np.savetxt(f'OutputPredictionData/RFRpredictions_n_steps_{n_steps}{name}.csv', predictions, delimiter=',')
     # Plot predictions
     plt.plot(range(len(data), len(data) + len(predictions)), predictions, label=f'n_steps={n_steps}')
