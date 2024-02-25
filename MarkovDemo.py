@@ -150,13 +150,19 @@ def isConflicting(chosenEvents):
             eventIdList.append(id)
     if count == 3: ### three new events chosen
         for state in chosenEvents:
-            if state
+            for otherState in chosenEvents:
+                if (not state == otherState) and (state.targetLot() == otherState.targetLot()):
+                    return True
+        return False
     elif count == 2:
         x = chosenEvents[eventIdList[0]]
         y = chosenEvents[eventIdList[1]]
-        if x.targetLot
+        if x.targetLot() == y.targetLot():
+            return True
+        return False
+            
     else:
-        return True
+        return False
         
 def simulation(startingEquipmentList):
     profit = 0
@@ -213,9 +219,13 @@ def simulation(startingEquipmentList):
         events = list(eventsDict.values()) 
         # a list of 3 lists, each list containing two lists: new states and occuring weightages
         ## eg: [[[Processing@0000000F, Switching@0000000A], [2, 1]], [], []]
-        chosenevents = list(map(lambda x: choose_with_probability(x[0], x[1])))
-        while(isConflicting(chosenevents)):
-            
+        chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1])))
+        while(isConflicting(chosenEvents)):
+            chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1])))
+        
+        for id in range(len(chosenEvents)):
+            if chosenEvents[id]:
+                currentEquipmentList[id].changeState(chosenEvents[id])   
         
         sample.append(convert(currentEquipmentList))
         

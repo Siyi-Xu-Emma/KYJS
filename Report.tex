@@ -1,0 +1,210 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+
+\geometry{left=20mm, right=20mm, top=20mm, bottom=20mm}
+\title{\textcolor{black}{2403073}\\ \vspace{12pt}{Magic Momentum: Unveiling game-changer dynamics}}
+\author{Team KYJS}
+\date{Feburary 2024}
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+\begin{document}
+
+\maketitle
+\section*{Summary}
+This research study aims at analyzing the precence and effects of momentum in sports starting from men's tennis to the whole landscape of sports. We provide three models in ascending order of complexity, functionality and comprehensiveness.
+
+Model A is for visualization of match flows based on factors analyzed from historical data of 
+\newpage
+\section{Introduction}
+\subsection{Background}
+Momentum, which refers to “strength or force gained by motion or by a series of events”, is believed to be commonly existing in sports matches and considered significant, especially in tennis. It gives one player a psychological edge over the opponent after winning a few points or games in a row, and then possibly increase the player’s confidence and control over the game. However, momentum is not reflected on the scoreboard. Recently, after a fierce five-game final happened in the 2023 Wimbledon including plenty of swings in momentum, how to quantify it as well as whether it really impacts the match have again become a heated topic.    There is demand for mathematically-justifiable models to quantify momentum,  
+
+\subsection{Restatement of problem}
+A dataset of every point from all Wimbledon 2023 men’s matches after the first 2 rounds is provided, including detailed information such as who wins the point, the set, the game and how the players wins every point. Thus, we decide to focus on the following questions:
+\begin{itemize}
+\item Develop a mathematical model to analyze the flow of the play as every point occurs, including which player is having an advantage over the other and how much better they are performing.
+\item Determine whether “momentum” generates an impact on the game or every point just occurs randomly.
+\item Identify the factors indicating that a swing is about to come
+\item Develop a model to predict the swings in the match
+\item Apply our finding to more matches and provide advice for players
+\item Test the performance of our model
+\end{itemize}
+\subsection{Literature review}
+
+
+\subsection{Assumptions and notations}
+
+This is a line of text. However, 
+entering a new line does 
+NOT create a new line in the document. We can use: \\
+to create a new line. To start a new paragraph, we just need to leave an empty line in the LaTeX code like this:
+
+Leaving multiple spaces in the LaTeX code like        this will not have any effect on the final pdf document. We use \ instead to create spaces between words. Just like \ \ \ \ \ \ this.
+
+%\section{Use this command to create a section, and}
+
+%\subsection{use this command for subsections.} 
+
+%\section*{If you do not want section/subsection numbers,}
+
+%\subsection*{Use these two commands instead.}
+
+
+You can customise your texts by using \textbf{bold-faced text}, \emph{italicised text}, and \underline{underlined text.} To create texts in the centre, we use
+\begin{center}
+	just like this.
+\end{center}
+
+To start a new page, we use: \newpage.
+
+\section{Model A: Visualization and basic factor analysis}
+\subsection{Background }
+a + b + x + y + z = 0\\
+$a + b + x + y + z = 0$\\
+\newline
+This is a sentence.\\
+$This is a sentence.$\\
+\newline
+$\frac{x}{y}$
+
+\subsection{Research overview}
+\subsection{General assumptions}
+$a^2 + b^2 = c^2$\\
+\newline
+$y_1-y_2 = m(x_1-x_2)$\\
+\newline
+$\lim_{x \to \infty} \frac{1}{x} = 0$\\
+\newline
+$a_1^2$\\
+\newline
+$a^2_1$\\
+\newline
+$\int_0^1 f(x) dx$\\
+\newline
+$\{y_n\}_{n=1}^\infty$
+\subsection*{Example 1}
+A polynomial of order $n$ is presented in the form 
+$p(x) = c_n x^n + c_{n-1} x^{n-1} + \cdots + c_1 x^1 + c_0$. \\
+An example will be $p(x) = \frac{1}{2}x^2 + x- 9$.
+
+\subsection*{Using Displaymath Environment}
+Example 1:\\
+$\sum_{n-1}^\infty\frac{1}{n}$
+\[\sum_{n-1}^\infty\frac{1}{n}\]
+Example 2:\\
+$\int_{-\infty}^\infty e^{-x}dx$
+\[\int_{-\infty}^\infty e^{-x}dx\]
+Example 3:\\
+$\lim_{x\rightarrow 0}\sin(x)$
+\[\lim_{x\to 0}\sin(x)\]
+
+\subsection*{Example 2}
+We can express the definite integral of $f(x)$, $\int_{a}^{b} f(x) dx$ as a Riemann sum, that is,
+\[  \int_{a}^{b} f(x) dx = \lim_{n \rightarrow \infty} \sum_{i=1}^n f(x_i^*) \Delta x.\]
+\subsection*{Inline Displaymath Environment}
+This is an example $\displaystyle \sum^\infty_{n=1} \frac{1}{n}$ of how this command is used.
+\subsection*{Writing Text in Math Mode}
+The Fibonacci sequence is defined by
+\[ F_1 = 0, F_2 =1, F_n= F_{n-1}+F_{n-2} \text{ for all } n \geq 3.
+\]
+\newline
+\[ \text{rank}(A) = n\]
+\[\text{Tr}(A) = \sum_{i=1}^n a_{i,i}\]
+\[S = \text{span}\{u_1,u_2,\cdots, u_m\}\]
+
+\newpage
+
+\section{Model B: }
+\subsection*{Align Environment}
+\begin{align*}
+    \text{tr}(AB) &= \sum^n_{i=1}(AB)_{i,i} \\
+    &= \sum^n_{i=1}\sum^n_{k=1}a_{i,k}b_{k,i} \\
+    &= \sum^n_{k=1}\sum^n_{i=1}b_{k,i}a_{i,k} \\
+    &= \sum^n_{k=1}(BA)_{k,k} \\
+    &= \text{tr}(BA)
+\end{align*}
+
+\subsection*{Delimiters}
+\[ \left( 1 \right) , 
+\left( \lim_{x\to\infty} x \right) , 
+\left( \int^1_0 f(x)\ dx \right) , 
+\left( \lim_{n\to\infty} \frac{\int^x_{-x} \sin(nt)\ dt}{e^{nx}} \right) , 
+\left( \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} \right) \] 
+
+\[ \left\{ 1 \right\} , 
+\left\{ \lim_{x\to\infty} x \right\} , 
+\left\{ \int^1_0 f(x)\ dx \right\} , 
+\left\{ \lim_{n\to\infty} \frac{\int^x_{-x} \sin(nt)\ dt}{e^{nx}} \right\} , 
+\left\{ \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} \right\} \]
+
+\[ \left| 1 \right| , 
+\left| \lim_{x\to\infty} x \right| , 
+\left| \int^1_0 f(x)\ dx \right| , 
+\left| \lim_{n\to\infty} \frac{\int^x_{-x} \sin(nt)\ dt}{e^{nx}} \right| , 
+\left| \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} \right| \]
+
+
+
+\newpage
+
+\section{Chapter 4 Demo Code}
+\begin{align*}
+	\left(
+	\begin{array}{lr||c}
+		1 					& 2 							& 3\\
+		a 					& b 							& c\\
+		\varepsilon 		& \delta 						& \gamma \\ 
+		This is a sentence & \textup{This is a sentence.} & \textup{\bf{a long text}} \\
+	\end{array}
+	\right)
+\end{align*}
+
+
+\begin{align*}
+	\left\{
+	\begin{array}{lrc}
+		1 & 2 & 3\\
+		a & b & c\\
+	\end{array}
+	\right\}
+\end{align*}
+
+\begin{align*}
+	\left|
+	\begin{array}{lrc}
+		1 & 2 & 3\\
+		a & b & c\\
+	\end{array}
+	\right\|
+\end{align*}
+
+\begin{align*}
+	\bigcap A:=\left\{
+		\begin{array}{ll}
+			\emptyset & \textup{if $A=\emptyset$;}\\
+			\{x:(\forall y\in A)(x\in y)\} & \textup{otherwise.}
+		\end{array}
+	\right.
+\end{align*}
+
+
+
+\newpage
+
+\section{Chapter 5 Demo Code}
+Clarke's three laws are:
+\begin{itemize}
+  \item When a distinguished but elderly scientist states that something is possible, he is almost certainly right. When he states that something is impossible, he is very probably wrong.
+  \item The only way of discovering the limits of the possible is to venture a little way past them into the impossible.
+  \item Any sufficiently advanced technology is indistinguishable from magic.
+\end{itemize}
+
+\section* {References}
+
+\end{document}
