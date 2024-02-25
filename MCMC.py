@@ -127,6 +127,12 @@ def choose_with_probability(choices, probabilities): ### Choose one of the choic
     choice = random.choices(choices, weights=normalized_probabilities, k=1)[0]
     return choice 
 
+def convert(currentEquipmentList):
+    result = []
+    for equipment in currentEquipmentList:
+        if equipment.getStateId() == 0:
+            result.append(['idle', 'idle', 'idle'])
+    
 def simulation(startingEquipmentList):
     profit = 0
     x = 0
@@ -134,14 +140,15 @@ def simulation(startingEquipmentList):
     z = 0
 
     sample = []
-    currentStatusList = startingEquipmentList
+    currentEquipmentList = startingEquipmentList
     lotsAvailable = []
     lotsUncompleted = []
     MlotId = -1
+    eventsDict = {}
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
-        for equipment in currentStatusList:
+        for equipment in currentEquipmentList:
             equipment.getState().cutRemainingTime()
             recipeList = equipmentData[equipment.getId()]
             if equipment.getState().getRemainingTime() > 0:
@@ -173,9 +180,12 @@ def simulation(startingEquipmentList):
                     # has to change state
                     newState = Processing(equipment.getState().getEndLot()) 
                     equipment.changeState(newState)
+        # update
+        
+        
                     
                 
-        sample.append()
+        sample.append(convert(currentEquipmentList))
     return (profit, x, y, z, sample)
     
     
@@ -186,7 +196,7 @@ def simulation(startingEquipmentList):
 ### Initialization
 startingEquipmentList = [Equipment(0), Equipment(1), Equipment(2)]
 
-for simulationTime in range(1008600):
+for simulationTime in range(100):
     maxProfit = 0
     resultPair = simulation(startingEquipmentList)
     statusList = []

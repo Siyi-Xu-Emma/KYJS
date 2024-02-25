@@ -113,7 +113,13 @@ class Equipment:
     def getState(self):
         return self.state 
     
-
+def convert(currentEquipmentList):
+    result = []
+    for equipment in currentEquipmentList:
+        if equipment.getStateId() == 0:
+            result.append(['idle', 'idle', 'idle'])
+        if equipment.getStateId() == 1:
+            result.append()
 
         
 
@@ -134,14 +140,19 @@ def simulation(startingEquipmentList):
     z = 0
 
     sample = []
-    currentStatusList = startingEquipmentList
+    currentEquipmentList = startingEquipmentList
     lotsAvailable = []
     lotsUncompleted = []
     MlotId = -1
+    eventsDict = {}
     
     ### Start simulation per 'time'
     for i in range(SIMULATION_RANGE):
-        for equipment in currentStatusList:
+        eventsDict = {}
+        for i in range(len(startingEquipmentList)):
+            eventsDict[i] = []
+        
+        for equipment in currentEquipmentList:
             equipment.getState().cutRemainingTime()
             recipeList = equipmentData[equipment.getId()]
             if equipment.getState().getRemainingTime() > 0:
@@ -164,6 +175,7 @@ def simulation(startingEquipmentList):
                         lotsAvailable.append(Lot(MLotId, chosenRecipe))
                     
                         
+                        
                 elif equipment.getStateId() == 1: # is Processing
                     # choice: 
                     pass
@@ -172,9 +184,9 @@ def simulation(startingEquipmentList):
                     # has to change state
                     newState = Processing(equipment.getState().getEndLot()) 
                     equipment.changeState(newState)
-                    
-                
-        sample.append()
+        # update
+        if all(map(lambda x: ))    
+        sample.append(convert(currentEquipmentList))
     return (profit, x, y, z, sample)
     
     
