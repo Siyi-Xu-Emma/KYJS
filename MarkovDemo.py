@@ -247,6 +247,7 @@ def addMaterials(i, materials):
 def simulation(startingEquipmentList):
     profit = 0
     materials = [0, 0, 0]
+    recipeUsed = [0, 0, 0, 0, 0]
     totalRevenue = 0
 
     
@@ -281,6 +282,7 @@ def simulation(startingEquipmentList):
                     recipeTime[equipment.getState().getProcessedLot().getRecipe()]:
                     ### start a new step
                     materials = addMaterials(currlot.getRecipe(), materials)
+                    recipeUsed[currlot.getRecipe()] += 1
                     if not currlot.getStep() == 0:
                         ### new lot
                         #print("remove", currlot)
@@ -295,7 +297,7 @@ def simulation(startingEquipmentList):
                         lotsAvailable.append(currlot)
                     else:
                         profit += price_per_lot
-                        totalRevenew += price_per_lot
+                        totalRevenue += price_per_lot
                 
             elif equipment.getStateId() == 2:
                 if equipment.getState().getRemainingTime() == \
@@ -473,7 +475,7 @@ def simulation(startingEquipmentList):
                 profit -= materials[m] * int(PRICING.iloc[m, 2])
         
         
-    return (profit, sample, totalRevenue, materials, )
+    return (profit, sample, totalRevenue, materials, recipeUsed)
     
     
     
@@ -498,7 +500,9 @@ for i in range(5):
 maxProfit = 0
 totalRevenue = 0
 materials = []
+recipeUsed = []
 for _ in range(10000):
+    print(_)
     startingEquipmentList = [Equipment(0), Equipment(1), Equipment(2)]
     resultPair = simulation(startingEquipmentList)
     if resultPair[0] >= maxProfit:
@@ -506,9 +510,15 @@ for _ in range(10000):
         statusList = resultPair[1]
         totalRevenue = resultPair[2]
         materials = resultPair[3]
+        recipeUsed = resultPair[4]
+        
         
     # print(resultPair[0])
 
 print("Maximum Profit:", maxProfit)
 print("\nStatusList:\n", pd.DataFrame(statusList))
+print(f"totalRevenue: {totalRevenue}\ntotalCost: {totalRevenue - maxProfit}\ncompletedLots: {totalRevenue//price_per_lot}")
+print("materials: ", materials)
+print("recipes: ", recipeUsed)
+
 
