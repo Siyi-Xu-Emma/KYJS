@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-SIMULATION_RANGE = 10
+SIMULATION_RANGE = 80
 TOTAL_STEPS_ID = 4
 SWITCH_TIME = pd.read_csv("switchTime.csv")
 RECIPE_COST = pd.read_csv("recipeCost.csv")
@@ -39,13 +39,15 @@ class State:
     
     def getId(self):
         return self.id
+    def __str__(self):
+        return f"State{self.id} "
 class Idle(State):
     def __init__(self):
         super().__init__(0)
         self.remainingTime = 1
     
     def cutRemainingTime(self):
-        self.remainingTime -1
+        self.remainingTime -= 1
         
     def getRemainingTime(self):
         return self.remainingTime
@@ -73,8 +75,8 @@ class Switching(State):
         super().__init__(2) 
         self.startLot = startLot
         self.endLot = endLot
-        startRecipe = startRecipe.getRecipe().getId()
-        endRecipe = endRecipe.getRecipe().getId()
+        startRecipe = startLot.getRecipe()
+        endRecipe = endLot.getRecipe()
         self.remainingTime = SWITCH_TIME.iloc[startRecipe, endRecipe]
     
     def getRemainingTime(self):
@@ -88,7 +90,8 @@ class Switching(State):
     
     def targetLot(self):
         return self.endLot.getId()
-  
+    def getStartLot(self):
+        return self.startLot
 class Equipment:
     def __str__(self):
         return f"Equipment{self.id}"
@@ -128,9 +131,11 @@ def convert(currentEquipmentList):
         if equipment.getStateId() == 0:
             result.append(['idle'] * 3)
         if equipment.getStateId() == 1:
-            result.append([equipment.getState().getProcessedLot().getId(), equipment.getState().getRecipe().getId(), equipment.getState().getProcessedLot().getStep()])
+            currentLot = equipment.getState().getProcessedLot()
+            result.append([currentLot.getId(), currentLot.getRecipe(), currentLot.getStep()])
         if equipment.getStateId() == 2:
             result.append(['switch'] * 3)
+    return result
 
 def choose_with_probability(choices, probabilities): ### Choose one of the choices according to their probabilities.
     if not choices:
@@ -167,7 +172,10 @@ def isConflicting(chosenEvents):
             
     else:
         return False
-        
+
+def exclude(lotsAvailable, lot):
+    return list(filter(lambda x: not x.getId() == lot.getId(), lotsAvailable))
+           
 def simulation(startingEquipmentList):
     profit = 0
     x = 0
@@ -177,14 +185,18 @@ def simulation(startingEquipmentList):
     sample = []
     currentEquipmentList = startingEquipmentList
     lotsAvailable = []
-    MlotId = -1
+    MLotId = -1
     eventsDict = {}
     
     ### Start simulation per 'time'
     for time in range(SIMULATION_RANGE):
+        print(pd.DataFrame(sample))
+        print(currentEquipmentList[0].getState().getRemainingTime(), currentEquipmentList[1].getState().getRemainingTime(), currentEquipmentList[2].getState().getRemainingTime())
+        
         eventsDict = {}
         for _ in range(len(startingEquipmentList)):
             eventsDict[_] = [[],[]]
+            
         ### lotslist lists here
         for equipment in currentEquipmentList:
             if equipment.getStateId() == 0:
@@ -193,26 +205,28 @@ def simulation(startingEquipmentList):
                 currlot = equipment.getState().getProcessedLot()
                 if equipment.getState().getRemainingTime() == recipeTime[equipment.getState().getProcessedLot().getRecipe()]:
                     ### start a new step
-                    if not currlot.getStep() == 0:
+                    if not currlot.getStep() == 0 and currlot in lotsAvailable:
                         ### new lot
-                        lotsAvailable.remove(equipment.getState().getProcessedLot())
+                        print("remove", currlot)
+                        lotsAvailable = exclude(lotsAvailable, currlot)
                     
-                elif equipment.getState().getRemainingTime() == 1: ## ending one step
+                if equipment.getState().getRemainingTime() == 1: ## ending one step
                     if not currlot.getStep() == TOTAL_STEPS_ID: ### not complete yet
+                        print("add to available", currlot, currlot.getRecipe(), currlot.getStep())
                         lotsAvailable.append(currlot)
                 
             elif equipment.getStateId() == 2:
-                if equipment.getState().getRemainingTime() == 1: #ending switching
-                    lotsAvailable.remove(equipment.getState().getEndLot())
-            
+                if equipment.getState().getRemainingTime() == SWITCH_TIME.iloc[equipment.getState().getStartLot().getRecipe(), equipment.getState().getEndLot().getRecipe()]:
+                    print("remove", equipment.getState().getEndLot())
+                    lotsAvailable = exclude(lotsAvailable, equipment.getState().getEndLot())
                     
-        
-        
-        
-        
+        for currlot in lotsAvailable:
+             print("current ava", currlot, currlot.getRecipe(), currlot.getStep())       
         
         for equipment in currentEquipmentList:
             equipment.getState().cutRemainingTime()
+            print(currentEquipmentList[0].getState().getRemainingTime(), currentEquipmentList[1].getState().getRemainingTime(), currentEquipmentList[2].getState().getRemainingTime())
+            
             recipeList = equipmentData[equipment.getId()]
             if equipment.getState().getRemainingTime() > 0:
                 #### Need not change state
@@ -274,7 +288,7 @@ def simulation(startingEquipmentList):
                                     eventsDict[equipment.getId()][1].append(NORMAL_POSSIBILITY)
                     remain = 0
                     for other in currentEquipmentList:
-                        if other.getStateId() == 1 and other.getState.getRemainingTime():
+                        if other.getStateId() == 1 and other.getState().getRemainingTime():
                             remain = other.getState().getRemainingTime()
                                     
                             ## if other state doing this lot remaining time little
@@ -294,18 +308,15 @@ def simulation(startingEquipmentList):
                     eventsDict[equipment.getId()][1].append(MAXIMUM_POSSIBILITY)
                     
         # update
+        print("event dict: \n", eventsDict)
         events = list(eventsDict.values()) 
         # a list of 3 lists, each list containing two lists: new states and occuring weightages
         ## eg: [[[Processing@0000000F, Switching@0000000A], [2, 1]], [], []]
         chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1]), events))
         while(isConflicting(chosenEvents)):
-            chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1])))
+            chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1]), events))
         
         
-        
-        
-        
-
         
         # Update currentEquipmentList
         for id in range(len(chosenEvents)):
@@ -314,7 +325,7 @@ def simulation(startingEquipmentList):
         
         
         sample.append(convert(currentEquipmentList))
-        print(convert(currentEquipmentList))
+        
     return (profit, x, y, z, sample)
     
     
