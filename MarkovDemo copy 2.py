@@ -25,35 +25,13 @@ MAXIMUM_POSSIBILITY = 100
 
 
 # priority
-stateIdPrio = [MINIMUM_POSSIBILITY,0.7,0.2]
-recipeTimePrio = [4, 3, 5, 2, 6] ## negatively
+stateIdPrio = [0.05,0.7,0.2]
+recipeTimePrio = [4, 3, 5, 2, 6]
 recipeCostPrio = [3, 2, 5, 1,4]
-stepPrio = [1, 2, 4, 6, 8]
+stepPrio = [2, 4, 6, 8]
 
-def weightage(state, time):
-    if state.getId() == 1:
-        recipe = state.getProcessedLot().getRecipe()
-        step = state.getProcessedLot(). getStep()
-        if time <= SIMULATION_RANGE - 14:
-            return stateIdPrio[1] * recipeCostPrio[recipe]/recipeTimePrio[recipe] * stepPrio[step]
-        else:
-            return stateIdPrio[1] * recipeCostPrio[recipe]/recipeTimePrio[recipe] * stepPrio[step]
-            
-    elif state.getId() == 2:
-        recipe = state.getEndLot().getRecipe()
-        step = state.getEndLot(). getStep()
-        if time <= SIMULATION_RANGE - 14:
-            return stateIdPrio[1] * recipeCostPrio[recipe]/recipeTimePrio[recipe] * stepPrio[step]
-        else:
-            return stateIdPrio[1] * recipeCostPrio[recipe] /recipeTimePrio[recipe]/recipeTimePrio[recipe] * stepPrio[step]
-    else:
-        if time <= SIMULATION_RANGE - 14:
-            return MINIMUM_POSSIBILITY
-        else:
-            return NORMAL_POSSIBILITY
-
-
-
+def Weightage():
+    pass
 
 class Lot: 
     ### Init every lot with a recipe and then can change with every steps completed 
@@ -247,7 +225,6 @@ def addMaterials(i, materials):
 def simulation(startingEquipmentList):
     profit = 0
     materials = [0, 0, 0]
-    totalRevenue = 0
 
     
     currentEquipmentList = startingEquipmentList
@@ -295,7 +272,6 @@ def simulation(startingEquipmentList):
                         lotsAvailable.append(currlot)
                     else:
                         profit += price_per_lot
-                        totalRevenew += price_per_lot
                 
             elif equipment.getStateId() == 2:
                 if equipment.getState().getRemainingTime() == \
@@ -343,9 +319,8 @@ def simulation(startingEquipmentList):
                             for recipe in overlap(stepData[0], recipeList):
                                 newLot = Lot(temLotId, 0, recipe)
                                 #print(newLot)
-                                _ = Processing(newLot)
-                                eventsDict[equipment.getId()][0].append(_)
-                                eventsDict[equipment.getId()][1].append(weightage(_, time)) ## normal
+                                eventsDict[equipment.getId()][0].append(Processing(newLot))
+                                eventsDict[equipment.getId()][1].append(NORMAL_POSSIBILITY)
                     else:  ## can still create lot but minimum possibility
                         #print("have")
                         temLotId = MLotId + 1
@@ -365,9 +340,8 @@ def simulation(startingEquipmentList):
                                 for recipe in overlap(stepData[lotChosen.getStep() + 1],recipeList):
                                     ### process available lot start processing
                                     newLot = Lot(lotChosen.getId(), lotChosen.getStep() + 1, recipe)
-                                    _ = Processing(newLot)
-                                    eventsDict[equipment.getId()][0].append(_)
-                                    eventsDict[equipment.getId()][1].append(weightage(_, time))
+                                    eventsDict[equipment.getId()][0].append(Processing(newLot))
+                                    eventsDict[equipment.getId()][1].append(NORMAL_POSSIBILITY)
                     
                         
                             
@@ -385,9 +359,8 @@ def simulation(startingEquipmentList):
                             and time <= SIMULATION_RANGE - 14: ## if definitely cannot complete a new lot
                             for recipe in overlap(stepData[0], recipeList):
                                 newLot = Lot(temLotId, 0, recipe)
-                                _ = Processing(newLot)
-                                eventsDict[equipment.getId()][0].append(_)
-                                eventsDict[equipment.getId()][1].append(weightage(_, time)) ## normal possibilities
+                                eventsDict[equipment.getId()][0].append(Processing(newLot))
+                                eventsDict[equipment.getId()][1].append(NORMAL_POSSIBILITY) 
                     else:
                         temLotId = MLotId + 1
                         if overlap(stepData[0], recipeList)\
@@ -395,7 +368,7 @@ def simulation(startingEquipmentList):
                             for recipe in overlap(stepData[0], recipeList):
                                 newLot = Lot(temLotId, 0, recipe)
                                 eventsDict[equipment.getId()][0].append(Processing(newLot))
-                                eventsDict[equipment.getId()][1].append(MINIMUM_POSSIBILITY) 
+                                eventsDict[equipment.getId()][1].append(MINIMUM_POSSIBILITY)
                                                                 
                     ## can remain working 
                     for lotChosen in lotsAvailable:
@@ -406,12 +379,12 @@ def simulation(startingEquipmentList):
                                     ### start processing with maximum possibility
                                     _ = Processing(newLot)
                                     eventsDict[equipment.getId()][0].append(_)
-                                    eventsDict[equipment.getId()][1].append(weightage(_, time)) ### maximum possibilities
+                                    eventsDict[equipment.getId()][1].append(weightage(_))
                                     
                                 else: #switch
                                     _ = Switching(equipment.getState().getProcessedLot(), newLot)
                                     eventsDict[equipment.getId()][0].append(_)
-                                    eventsDict[equipment.getId()][1].append(weightage(_, time)) ###normal possibilities
+                                    eventsDict[equipment.getId()][1].append(weightage(_)) ###normal possibilities
                     remain = 0
                     for other in currentEquipmentList:
                         if other.getStateId() == 1 and other.getState().getRemainingTime():
@@ -473,41 +446,23 @@ def simulation(startingEquipmentList):
                 profit -= materials[m] * int(PRICING.iloc[m, 2])
         
         
-    return (profit, sample, totalRevenue, materials, )
+    return (profit, sample)
     
     
     
-
-
-### test weightage
-A = {}
-A[0] = Lot(0, 1, 3)
-A[1] = Lot(0, 2, 1)
-A[2] = Lot(0, 4, 2)
-A[3] = Lot(0, 1, 4)
-A[4] = Lot(0, 3, 1)
-A[5] = Lot(0, 4, 3)
-A[6] = Lot(0, 2, 2)
-for i in range(5):
-    print(weightage(Processing(A[i]),0), weightage(Processing(A[i]),SIMULATION_RANGE-1), weightage(Switching(A[i], A[i+1]),0), weightage(Switching(A[i], A[i+1]),SIMULATION_RANGE-1))
 
 
 
 ### Initialization
 
 maxProfit = 0
-totalRevenue = 0
-materials = []
-for _ in range(10000):
+for _ in range(100):
     startingEquipmentList = [Equipment(0), Equipment(1), Equipment(2)]
     resultPair = simulation(startingEquipmentList)
     if resultPair[0] >= maxProfit:
         maxProfit = resultPair[0]
         statusList = resultPair[1]
-        totalRevenue = resultPair[2]
-        materials = resultPair[3]
-        
-    # print(resultPair[0])
+    print(resultPair[0])
 
 print("Maximum Profit:", maxProfit)
 print("\nStatusList:\n", pd.DataFrame(statusList))
