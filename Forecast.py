@@ -178,12 +178,6 @@ def forecast(tankSize, productNum, numOfTanks, batchLifes, loadSizes, getReclaim
                 if tank.isProcessing():
                     tank.shiftProcessing()
             
-
-
-
-
-            
-            
     usageResult.append(weekUsage)
     return usageResult
 
