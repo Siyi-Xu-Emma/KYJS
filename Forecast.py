@@ -151,7 +151,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
                     weekProducts.pop(h)
                     break
 
-        print(remainWafers)              
+        print("remain wafers", remainWafers)              
         remainWafers -= processSpeed
         if remainWafers <= 0:  ### end one batch
             if tank.isProcessing():
@@ -194,4 +194,4 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 batchLifes = [7, 8]
 loadSizes = [37, 51]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 5))
+print(forecast(80, 2, numOfTanks, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
