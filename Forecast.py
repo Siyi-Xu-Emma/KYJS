@@ -81,7 +81,7 @@ def chooseProduct(tank, product, weekProducts):
         # return weekProducts[0]
         return random.choice(weekProducts)
     else:
-        print("demand met alr")
+        raise("demand met alr")
         return None
     
     
@@ -105,15 +105,16 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
     for i in range(productNum):
         weekDemand[i] = demand.iloc[i, weekIndex] 
     processSpeed = sum(weekDemand.values())/WEEKMINS
+    print(weekIndex, weekDemand, processSpeed)
     
     ## simulation in min
     for time in range(0, predictionRange): 
         tank.cutChemicalLife()
-        print("current chemicalLife", tank.getChemicalLife())
+        # print("current chemicalLife", tank.getChemicalLife())
         if tank.getChemicalLife() <= 0:
             amount = tank.replenish(getReclaimEfficiency(time))
             weekUsage += amount
-            # print("replenish chemicalLife", amount)       
+            print("replenish chemicalLife", amount)       
     
         ### Start processing
         if not tank.isProcessing():
@@ -122,6 +123,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
             #print(currentProduct)
             if currentProduct:
                 remainWafers = currentProduct.getLoadSize()
+                currentProduct = chooseProduct(tank, currentProduct, weekProducts)
                 
                 ### cut remainbatchlife
                 tank.cutBatchLife(currentProduct)
@@ -129,10 +131,10 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
                 if tank.getRemainBatchLife() <= 0:
                     # print(tank.getRemainBatchLife())
                     ## replenish
-                    # print("replenish", currentProduct)
+                    print("replenish", currentProduct)
                     weekUsage += tank.replenish(getReclaimEfficiency(time))
                 
-                currentProduct = chooseProduct(tank, currentProduct, weekProducts)
+                
  
         if currentProduct:    
             #print(weekDemand, weekProducts, currentProduct)
@@ -191,7 +193,7 @@ def forecast(tankSize, productNum, batchLifes, loadSizes, getReclaimEfficiency, 
 
 #Test
 # Parameter predefined
-batchLifes = [5, 8]
+batchLifes = [7, 8]
 loadSizes = [37, 51]
 # Print Results
-print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 1))
+print(forecast(80, 2, batchLifes,loadSizes, getReclaimEfficiency, demand, 10))
