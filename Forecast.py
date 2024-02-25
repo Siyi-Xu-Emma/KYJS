@@ -122,7 +122,7 @@ def forecast(tankSize, productNum, numOfTanks, batchLifes, loadSizes, getReclaim
     predictionRange = WEEKMINS * weeks
     for time in range(0, predictionRange): 
         if not (time + 1) % WEEKMINS and weekIndex < weeks - 1: ## initiate new week after one week
-            print("\n", weekIndex, weekDemand)
+            # print("\n", weekIndex, weekDemand)
             weekIndex += 1
             weekDemand = {}
             for i in range(productNum):
@@ -144,7 +144,7 @@ def forecast(tankSize, productNum, numOfTanks, batchLifes, loadSizes, getReclaim
             # print(tank.getId(), tank.getChemicalLife())
             if tank.getChemicalLife() <= 0:
                 weekUsage += tank.replenish(getReclaimEfficiency(time))
-                print(tank.getId(), "replenish chemicalLife", tank.getId())       
+                ## print(tank.getId(), "replenish chemicalLife", tank.getId())       
     
         ### Start processing
             if not tank.isProcessing():
@@ -159,7 +159,7 @@ def forecast(tankSize, productNum, numOfTanks, batchLifes, loadSizes, getReclaim
                 if tank.getRemainBatchLife() <= 0:
                     # print(tank.getRemainBatchLife())
                     ## replenish
-                    print(tank.getId(), "replenish", currentProductsTanks[tank.getId()])
+                    ## print(tank.getId(), "replenish", currentProductsTanks[tank.getId()])
                     weekUsage += tank.replenish(getReclaimEfficiency(time))
                     
             if currentProductsTanks[tank.getId()]:
