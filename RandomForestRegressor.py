@@ -39,7 +39,10 @@ def train_random_forest_model(data, n_steps, future_steps):
     x_input = data[-n_steps:].reshape(1, -1)
     predictions = data.tolist()  # Convert to list to allow appending
     for _ in range(future_steps):
-        y_pred = model.predict(x_input)
+        # Introduce some randomness by adding noise to the input data
+        noise = np.random.normal(scale=0.1, size=x_input.shape)  # Adjust scale as needed
+        x_input_with_noise = x_input + noise
+        y_pred = model.predict(x_input_with_noise)
         predictions.append(y_pred[0])
         x_input = np.append(x_input[:, 1:], [[y_pred[0]]], axis=1)
     
