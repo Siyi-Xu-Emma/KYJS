@@ -4,11 +4,10 @@ from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
 demand = pd.read_csv("Datasets/Weekly_Projections.csv")
-# Example data
-data = np.array(demand.iloc[0,:])
-name = "Product 1 Demand Prediction weekly"
+data = np.array(demand.iloc[0, :])
+name = "Product_1_Demand_Prediction_weekly"
 future_steps = 10
-#data = data1 = np.array(demand.iloc[1,:])
+num_iterations = 5  # Specify the number of iterations
 
 # Function to prepare data for Random Forest Regressor
 def prepare_data(data, n_steps):
@@ -17,7 +16,7 @@ def prepare_data(data, n_steps):
         # Find the end of this pattern
         end_ix = i + n_steps
         # Check if we are beyond the sequence
-        if end_ix > len(data)-1:
+        if end_ix > len(data) - 1:
             break
         # Gather input and output parts of the pattern
         seq_x, seq_y = data[i:end_ix], data[end_ix]
@@ -31,14 +30,14 @@ def train_random_forest_model(data, n_steps, future_steps):
     X, y = prepare_data(data, n_steps)
     
     # Define the Random Forest Regressor model
-    model = RandomForestRegressor(n_estimators= future_steps, random_state=42)
+    model = RandomForestRegressor(n_estimators=future_steps, random_state=42)
     
     # Fit the model
     model.fit(X, y)
     
     # Make future predictions
     x_input = data[-n_steps:].reshape(1, -1)
-    predictions = data
+    predictions = data.tolist()  # Convert to list to allow appending
     for _ in range(future_steps):
         y_pred = model.predict(x_input)
         predictions.append(y_pred[0])
@@ -47,7 +46,7 @@ def train_random_forest_model(data, n_steps, future_steps):
     return predictions
 
 # Define values of n_steps to test
-n_steps_list = [2, 3, 4, 5, 6, 7]
+n_steps_list = [6,7,8]
 
 # Plot original data
 plt.figure(figsize=(10, 6))
@@ -55,11 +54,14 @@ plt.scatter(range(len(data)), data, label='Original Data')
 
 # Loop over different values of n_steps
 for n_steps in n_steps_list:
-    # Train Random Forest model and make predictions
-    predictions = train_random_forest_model(data, n_steps, future_steps)
-    np.savetxt(f'OutputPredictionData/RFRpredictions_n_steps_{n_steps}{name}.csv', predictions, delimiter=',')
-    # Plot predictions
-    plt.plot(range(len(data), len(data) + len(predictions)), predictions, label=f'n_steps={n_steps}')
+    for i in range(num_iterations):  # Specify the number of iterations
+        predictions = train_random_forest_model(data, n_steps, future_steps)
+        data = np.array(predictions)
+        # Plot predictions
+        
+    # Save predictions to CSV
+    np.savetxt(f'OutputPredictionData/RFR_predictions_n_steps_{n_steps}_{name}.csv', predictions, delimiter=',')
+    plt.plot(range(len(predictions)), predictions, label=f'n_steps={n_steps}')
 
 # Add legend and labels
 plt.legend()
