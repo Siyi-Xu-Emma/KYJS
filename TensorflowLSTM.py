@@ -62,7 +62,7 @@ def train_lstm_model(data, n_steps, future_steps):
     return predictions
 
 # Define values of n_steps to test
-n_steps_list = [5, 6, 7]
+n_steps_list = [2, 3, 4, 5, 6, 7]
 
 # Plot original data
 plt.figure(figsize=(10, 6))
