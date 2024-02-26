@@ -5,7 +5,7 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 import numpy as np
 import random
-SIMULATION_RANGE = 168
+SIMULATION_RANGE = 141
 TOTAL_STEPS_ID = 4
 SWITCH_TIME = pd.read_csv("switchTime.csv")
 RECIPE_COST = pd.read_csv("recipeCost.csv")
@@ -115,7 +115,6 @@ class Processing(State):
     def targetLot(self):
         return self.lot.getId()
     
-
 class Switching(State):
     def __init__(self, startLot, endLot):
         super().__init__(2) 
@@ -224,7 +223,6 @@ def isConflicting(chosenEvents):
     else:
         return False
 
-
 def tweak(chosenEvents):
     flag = {}
     for i in range(len(chosenEvents)):
@@ -234,8 +232,7 @@ def tweak(chosenEvents):
                 if (not j == i) and (chosenEvents[j] and chosenEvents[i].targetLot in flag):
                     chosenEvents[j] = Idle()
     return chosenEvents
-                
-            
+                           
 def exclude(lotsAvailable, lot):
     return list(filter(lambda x: not x.getId() == lot.getId(), lotsAvailable))
 
@@ -420,13 +417,13 @@ def simulation(startingEquipmentList):
                             remain = other.getState().getRemainingTime()
                                     
                             ## if other state doing this lot remaining time little
-                            if overlap(stepData[lotChosen.getStep() + 1], recipeList):
-                                for recipe in overlap(stepData[lotChosen.getStep() + 1], recipeList):
-                                    if recipe != equipment.getState().getProcessedLot().getRecipe():
+                            if other.getState().getProcessedLot().getStep() < TOTAL_STEPS_ID:
+                                for recipe in overlap(stepData[other.getState().getProcessedLot().getStep() + 1], recipeList):
+                                    if not recipe == equipment.getState().getProcessedLot().getRecipe():
                                         if SWITCH_TIME.iloc[equipment.getState().\
                                             getProcessedLot().getRecipe(), recipe] <= remain:
-                                            newLot = Lot(lotChosen.getId(), \
-                                                lotChosen.getStep() + 1, recipe)
+                                            newLot = Lot(other.getId(), \
+                                                other.getState().getProcessedLot().getStep() + 1, recipe)
                                             newState = Switching(equipment.getState().getProcessedLot(), newLot)
                                             eventsDict[equipment.getId()][0].append(newState)
                                             eventsDict[equipment.getId()][1].append(MAXIMUM_POSSIBILITY)
@@ -501,7 +498,7 @@ maxProfit = 0
 totalRevenue = 0
 materials = []
 recipeUsed = []
-for _ in range(10000):
+for _ in range(1):
     print(_)
     startingEquipmentList = [Equipment(0), Equipment(1), Equipment(2)]
     resultPair = simulation(startingEquipmentList)
@@ -515,8 +512,9 @@ for _ in range(10000):
         
     # print(resultPair[0])
 
-print("Maximum Profit:", maxProfit)
+
 print("\nStatusList:\n", pd.DataFrame(statusList))
+print("Maximum Profit:", maxProfit)
 print(f"totalRevenue: {totalRevenue}\ntotalCost: {totalRevenue - maxProfit}\ncompletedLots: {totalRevenue//price_per_lot}")
 print("materials: ", materials)
 print("recipes: ", recipeUsed)
