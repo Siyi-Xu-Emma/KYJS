@@ -5,7 +5,7 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 import numpy as np
 import random
-SIMULATION_RANGE = 141
+SIMULATION_RANGE = 150
 TOTAL_STEPS_ID = 4
 SWITCH_TIME = pd.read_csv("switchTime.csv")
 RECIPE_COST = pd.read_csv("recipeCost.csv")
@@ -27,7 +27,7 @@ MAXIMUM_POSSIBILITY = 100
 # priority
 stateIdPrio = [MINIMUM_POSSIBILITY,0.7,0.2]
 recipeTimePrio = [4, 3, 5, 2, 6] ## negatively
-recipeCostPrio = [3, 2, 5, 1,4]
+recipeCostPrio = [6, 3, 5, 0.2, 4]
 stepPrio = [1, 2, 4, 6, 8]
 
 def weightage(state, time):
@@ -51,8 +51,6 @@ def weightage(state, time):
             return MINIMUM_POSSIBILITY
         else:
             return NORMAL_POSSIBILITY
-
-
 
 
 class Lot: 
@@ -251,7 +249,7 @@ def simulation(startingEquipmentList):
     currentEquipmentList = startingEquipmentList
     sample = [convert(currentEquipmentList)]
     lotsAvailable = []
-    MLotId = 2
+    MLotId = -1
     eventsDict = {}
     
     ### initialize three lots
@@ -261,14 +259,13 @@ def simulation(startingEquipmentList):
     ### Start simulation per 'time'
     for time in range(SIMULATION_RANGE):
         
-        #print(currentEquipmentList[0].getState().getRemainingTime(), \
-            #currentEquipmentList[1].getState().getRemainingTime(), \
-                #currentEquipmentList[2].getState().getRemainingTime())
+        print(currentEquipmentList[0].getState().getRemainingTime(), \
+            currentEquipmentList[1].getState().getRemainingTime(), \
+                currentEquipmentList[2].getState().getRemainingTime())
         
         eventsDict = {}
         for _ in range(len(startingEquipmentList)):
             eventsDict[_] = [[],[]]
-            
         ### lotslist lists here
         for equipment in currentEquipmentList:
             if equipment.getStateId() == 0:
@@ -303,9 +300,16 @@ def simulation(startingEquipmentList):
                     #print("remove", equipment.getState().getEndLot())
                     lotsAvailable = exclude(lotsAvailable, equipment.getState().getEndLot())
                     
-        #for currlot in lotsAvailable:
-            #print("current ava", currlot, currlot.getRecipe(), currlot.getStep())       
+        for currlot in lotsAvailable:
+            print("current ava", currlot, currlot.getRecipe(), currlot.getStep())       
         
+        
+        
+        
+        
+        
+        
+        ### event possibilities
         for equipment in currentEquipmentList:
             equipment.getState().cutRemainingTime()
             '''print(currentEquipmentList[0].getState().getRemainingTime(), \
@@ -458,7 +462,7 @@ def simulation(startingEquipmentList):
         # Record result
         r = convert(currentEquipmentList)
         sample.append(r)
-        #print(time, r)
+        print(time, r)
         
         ####
     # calculate profit 
