@@ -222,14 +222,15 @@ def isConflicting(chosenEvents):
     else:
         return False
 
-def tweak(chosenEvents):
+def tweak(chosenEvents, fix):
     flag = {}
     for i in range(len(chosenEvents)):
         if chosenEvents[i]:
             flag[chosenEvents[i].targetLot] = 1
             for j in range(len(chosenEvents)):
                 if (not j == i) and (chosenEvents[j] and chosenEvents[i].targetLot in flag):
-                    chosenEvents[j] = Idle()
+                    if not fix[j]:
+                        chosenEvents[j] = Idle()
     return chosenEvents
                            
 def exclude(lotsAvailable, lot):
@@ -264,6 +265,7 @@ def simulation(startingEquipmentList):
     sample = [convert(currentEquipmentList)]
     ### Start simulation per 'time'
     for time in range(SIMULATION_RANGE):
+        fix = [0, 0, 0]
         
         print(currentEquipmentList[0].getState().getRemainingTime(), \
             currentEquipmentList[1].getState().getRemainingTime(), \
@@ -452,6 +454,7 @@ def simulation(startingEquipmentList):
                     
                 else: ## is switching
                     # has to change state
+                    fix[equipment.getId()] = 1
                     newState = Processing(equipment.getState().getEndLot()) 
                     eventsDict[equipment.getId()][0].append(newState)
                     eventsDict[equipment.getId()][1].append(MAXIMUM_POSSIBILITY)
@@ -468,7 +471,7 @@ def simulation(startingEquipmentList):
             chosenEvents = list(map(lambda x: choose_with_probability(x[0], x[1]), events))
             count +=1
             if count >= MAX_LOOP_RANGE:
-                chosenEvents = tweak(chosenEvents)
+                chosenEvents = tweak(chosenEvents, fix)
                 break
                 
         
